@@ -1,12 +1,16 @@
 const express = require('express');
 const async   = require('async');
 const mongo   = require('mongodb').MongoClient;
+require('dotenv').config();
 
 const app     = express();
-const port    = process.env.PORT || 3005;
-
-const user = encodeURIComponent('quotes');
-const pass = encodeURIComponent('2XVgHKLLAA2Q');
+const port    = process.env.port;
+const user = process.env.user;
+const pass = process.env.pass;
+const DB_port = process.env.DB_port;
+const db = process.env.db;
+const table = process.env.table;
+const url = process.env.url;
 
 
 app.get('/table', (req, res) =>{
@@ -58,18 +62,24 @@ function searchQuote(req, res) {
 }
 
 function queryMongo(req, callback) {
-    mongo.connect(`mongodb://${user}:${pass}@uspgh-fsquotes1-d1.amer.thermo.com:27017/dev1_us_quotes`, (err, db) =>{
+    mongo.connect(`mongodb://${user}:${pass}@${url}:${DB_port}/${db}`, (err, db) =>{
             if (err){
                 throw err;
             } else {
-                db.collection('quotes', (err, collection) =>{
+                db.collection(table, (err, collection) => {
+                    if(collection){
                     collection.find().toArray((err, items) => {
-                        if (err){
+                        if (err) {
                             throw err;
-                        } else{
+                            console.log("error");
+                        } else {
                             callback(null, items);
                         }
                     });
+                }else{
+                        callback(null,{error:'response came empty'})
+                    }
+
                 })
             }
     });
@@ -77,12 +87,14 @@ function queryMongo(req, callback) {
 }
 
 function searchMongo(req, callback) {
-    mongo.connect(`mongodb://${user}:${pass}@uspgh-fsquotes1-d1.amer.thermo.com:27017/dev1_us_quotes`, (err, db) =>{
+    let number = req.query.quoteNumber;
+    console.log(number);
+    mongo.connect(`mongodb://${user}:${pass}@${url}:${DB_port}/${db}`, (err, db) =>{
         if (err){
             throw err;
         } else {
             db.collection('quotes', (err, collection) =>{
-                collection.find({quoteNumber: req.quoteNumber}).toArray((err, items) => {
+                collection.find({quoteNumber: req.query.quoteNumber}).toArray((err, items) => {
                     if (err){
                         throw err;
                     } else{

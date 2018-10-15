@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import './App.css';
 import Search from './search';
-import Table from './table'
+import QuoteSumary from './quotesSumary'
+import QuoteDetails from './quoteDetails'
 import 'tachyons'
 
 class App extends Component {
+
+
     constructor(){
     super()
     this.state = {
-        response: [{quoteNumber:"00", quoteReqType:"00", quoteCreatedDt:"00", quoteExpiryDt:"00"}],
+        response: [{quoteNumber:"This user has no quotes", quoteReqType:"00", quoteCreatedDt:"00", quoteExpiryDt:"00"}],
         search: ''
     };
 }
@@ -40,12 +43,12 @@ class App extends Component {
 
     return (
       <div className = 'pa3'>
-          <div className = "App h-25">
-                <Search searchChange={this.onSearchChange}/>
+          {/*<div className = "App h-25">*/}
+                {/*<Search searchChange={this.onSearchChange}/>*/}
 
-          </div>
+          {/*</div>*/}
         <div>
-            <Table quotes={filterQuotes}/>
+            <QuoteSumary quotes={filterQuotes}/>
         </div>
 
       </div>
